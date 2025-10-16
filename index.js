@@ -6,23 +6,18 @@ const app = express();
 app.get("/file/:filename", function(req, res){
   const name = req.params.filename;
   
-  fs.readFile(name, "utf-8", function(err, data){
+  // Use __dirname to get the absolute path to your files
+  const filePath = path.join(__dirname, name);
+  
+  fs.readFile(filePath, "utf-8", function(err, data){
     if (err) {
-      // This will show what's wrong in Vercel logs
       console.log("ERROR:", err.message);
+      console.log("Looking for file at:", filePath);
       return res.json({ 
         error: true,
         message: err.message,
-        filename: name
-      });
-    }
-    
-    // Check if data is empty
-    if (!data || data.trim() === '') {
-      return res.json({
-        error: true,
-        message: "File is empty",
-        filename: name
+        filename: name,
+        path: filePath
       });
     }
     
